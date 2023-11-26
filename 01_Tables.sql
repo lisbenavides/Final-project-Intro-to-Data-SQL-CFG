@@ -59,6 +59,12 @@ CREATE TABLE Data_publish (
 );
 
 TRUNCATE TABLE Data_publish;
+
+ALTER TABLE Data_publish
+ADD CONSTRAINT fk_sample_id 
+FOREIGN KEY (Sample_id)
+REFERENCES Data_Sample (Sample_id);
+
 SELECT * FROM Data_publish;
 
 -- Lab run
@@ -71,6 +77,19 @@ CREATE TABLE Lab_run (
     Run_id INTEGER PRIMARY KEY,
     CONSTRAINT Uniqueness UNIQUE (Sample_id, Method_id, Size_fraction)
 );
+
+ALTER TABLE Lab_run
+ADD CONSTRAINT fk_sample_id_lab_run 
+FOREIGN KEY (Sample_id)
+REFERENCES Data_Sample (Sample_id),
+ADD CONSTRAINT fk_method_id 
+FOREIGN KEY (Method_id)
+REFERENCES Code_method (Method_id),
+ADD CONSTRAINT fk_lab_id 
+FOREIGN KEY (Lab_id)
+REFERENCES Code_lab (Lab_id);
+
+SELECT * FROM Lab_run;
     
 -- Data Analysis
 
@@ -81,7 +100,22 @@ CREATE TABLE Lab_run (
     CONSTRAINT PK_Analyte PRIMARY KEY (Run_id,Analyte)
     );
     
+ALTER TABLE Data_Analysis
+ADD CONSTRAINT fk_run_id
+FOREIGN KEY (Run_id)
+REFERENCES Lab_run (Run_id);
+    
+SELECT * FROM Data_Analysis;
 
+CREATE TABLE Chondrite_REE_values (
+    Analyte VARCHAR(20) PRIMARY KEY,
+    Abundance FLOAT
+    );
+    
+SELECT * FROM Chondrite_REE_values;
 
-
-
+-- Nota para mi: recordar que en la tabla Data_publish uso una 
+-- CONSTRAINT - PRIMARY KEY (A combination of a NOT NULL and UNIQUE. 
+-- Uniquely identifies each row in a table). Mientras que en la tabla Lab_run uso 
+-- una CONSTRAINT - UNIQUE (Ensures that all values in a column are different) porque
+-- despues voy a necesitar usar el Run_id como PK en otra tabla. 
